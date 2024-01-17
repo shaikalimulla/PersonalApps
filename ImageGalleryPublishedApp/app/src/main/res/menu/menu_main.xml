@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:compat="http://schemas.android.com/apk/res-auto"
+    xmlns:appname="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimary" >
+
+    <item android:id="@+id/action_speech"
+        android:icon="@drawable/ic_perm_camera_mic"
+        android:showAsAction="always"
+        android:title="Speech"
+        android:layout_gravity="center"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_height="50dp"
+        />
+
+    <item android:id="@+id/action_info"
+        android:icon="@drawable/ic_info"
+        appname:showAsAction="ifRoom"
+        android:title="App Info"
+        android:layout_gravity="center"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_height="50dp"
+        />
+
+    <item android:id="@+id/action_home"
+        appname:showAsAction="ifRoom"
+        android:title="Home"
+        android:layout_gravity="center"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_height="50dp"
+        />
+
+    <item android:id="@+id/action_policy"
+        android:icon="@drawable/ic_info"
+        appname:showAsAction="ifRoom"
+        android:title="Privacy Policy"
+        android:layout_gravity="center"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_height="50dp"
+        />
+    <!--
+    <item android:id="@+id/action_call"
+        android:icon="@drawable/ic_action_call"
+        android:showAsAction="ifRoom"
+        android:title="Call"/>
+    <item android:id="@+id/action_done"
+        android:icon="@drawable/ic_action_done"
+        android:showAsAction="ifRoom"
+        android:title="Done"/>
+    <item android:id="@+id/action_contacts"
+        android:showAsAction="never"
+        android:title="Contacts"/>
+    <item android:id="@+id/action_settings"
+        android:showAsAction="never"
+        android:title="Settings"/>
+    <item android:id="@+id/action_status"
+        android:showAsAction="never"
+        android:title="Status" />
+-->
+</menu>
