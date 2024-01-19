@@ -1,45 +1,24 @@
-package com.example.alimu.imagegallery
+package com.example.alimu.imagegallery.ui.main
 
-import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.drawable.StateListDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
-import android.speech.RecognizerIntent
 import android.util.LruCache
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
+import android.view.KeyEvent
 import android.view.View
-import android.view.ViewGroup
-import android.widget.AdapterView.OnItemClickListener
-import android.widget.BaseAdapter
 import android.widget.GridView
 import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.example.alimu.imagegallery.common.ImageUtil.getUriFromFile
+import com.example.alimu.imagegallery.R
+import com.example.alimu.imagegallery.common.FragmentHelper
 import com.example.alimu.imagegallery.common.PermissionUtil.areMediaPermissionsGranted
 import com.example.alimu.imagegallery.common.PermissionUtil.requestMediaPermissions
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.example.alimu.imagegallery.ui.directoriesgridview.DirectoriesGridFragment
 
 /*
 References:
@@ -52,33 +31,113 @@ References:
 7. https://images.search.yahoo.com/yhs/search;_ylt=A0LEVvcQDkFY5SMAlcEnnIlQ?p=gallery+icon+512+512&fr=yhs-mozilla-002&fr2=piv-web&hspart=mozilla&hsimp=yhs-002#id=38&iurl=https%3A%2F%2Fcdn2.iconfinder.com%2Fdata%2Ficons%2Fios-7-style-metro-ui-icons%2F512%2FMetroUI_Windows8_Photos.png&action=click
 8. https://www.google.com/search?q=images+folder&espv=2&biw=1366&bih=662&source=lnms&tbm=isch&sa=X&ved=0ahUKEwjZ6dmXpY7RAhUo1oMKHdRJAQQQ_AUIBigB#q=pictures+folder&tbm=isch&tbs=rimg:Ce26CZhuaLFtIjgw0WBr-Q4yRbiXSMGMZLdczhe9abcf-ATEjPg1HtVOQPlTnggVyNUj3r1qR8LaCzDmMYJN5rNmcioSCTDRYGv5DjJFEYuJyVsgLrqcKhIJuJdIwYxkt1wR8_1VDJrW3lj4qEgnOF71ptx_14BBGEXUahkVSFHioSCcSM-DUe1U5AET5Glhv8I0-CKhIJ-VOeCBXI1SMRxwqEGHM34ukqEgnevWpHwtoLMBElznHw_198xjioSCeYxgk3ms2ZyEb536eI_1SXv2&imgdii=TZsqZwaX9GaUDM%3A%3BTZsqZwaX9GaUDM%3A%3BXsthefvqhUZAHM%3A&imgrc=TZsqZwaX9GaUDM%3A
 */
-open class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MainContract.View {
     var dirSizeList = ArrayList<Int>()
     @JvmField
     var currentImagePath: String? = null
     private var clickImageButton: ImageButton? = null
     private var gridview: GridView? = null
-    private var imageAdapter: ImageAdapter? = null
+    //private var imageAdapter: ImageAdapter? = null
     private var memoryCache: LruCache<String, Bitmap?>? = null
     private lateinit var permissionResultLauncher: ActivityResultLauncher<Array<String>>
     private var photoUri: Uri? = null
+    private lateinit var presenter: MainContract.Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        presenter = MainPresenter(this)
+
         permissionResultLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            onRequestPermissionResult(savedInstanceState)
+            onRequestPermissionResult()
         }
 
-        if (areMediaPermissionsGranted(this.applicationContext)) {
-            initializeViews(savedInstanceState)
-        } else {
-            requestMediaPermissions(permissionResultLauncher)
+        presenter.start()
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 0 && grantResults.isNotEmpty()) {
+            var permissionGrantedCount = 0
+            grantResults.forEach { value ->
+                if (value == PackageManager.PERMISSION_GRANTED) {
+                    permissionGrantedCount++
+                }
+            }
+            if (grantResults.size == permissionGrantedCount) {
+                // All permissions granted
+                clickImageButton?.isEnabled = true
+                val intent = Intent(applicationContext, MainActivity::class.java)
+                startActivity(intent)
+            }
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    override fun onSupportNavigateUp(): Boolean {
+        back()
+        return true
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event?.repeatCount == 0) {
+            back()
+
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    override fun isActive(): Boolean {
+        return !isFinishing && !isDestroyed
+    }
+
+    override fun areMediaPermissionsGranted() = areMediaPermissionsGranted(this.applicationContext)
+
+    override fun showDirectoriesGridFragment() {
+        if (isActive().not()) {
+            return
+        }
+        FragmentHelper.showAsTop(
+            this,
+            DirectoriesGridFragment.newInstance(),
+            DirectoriesGridFragment.TAG
+        )
+    }
+
+    override fun requestMediaPermissions() {
+        requestMediaPermissions(permissionResultLauncher)
+    }
+
+    fun goBack(view: View?) {
+        back()
+    }
+
+    private fun onRequestPermissionResult() {
+        if (areMediaPermissionsGranted(this.applicationContext)) {
+            showDirectoriesGridFragment()
+        } else {
+            Toast.makeText(
+                applicationContext,
+                "Please accept media permissions to continue the app",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun back() {
+        val fragmentManager = supportFragmentManager
+        if (fragmentManager.backStackEntryCount > 1) {
+            fragmentManager.popBackStack()
+        } else {
+            super.finish()
+        }
+    }
+
+    /*override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = MenuInflater(this)
         inflater.inflate(R.menu.menu_main, menu)
         return true
@@ -144,21 +203,6 @@ open class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 0) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                clickImageButton?.isEnabled = true
-                val intent = Intent(applicationContext, MainActivity::class.java)
-                startActivity(intent)
-            }
-        }
-    }
-
     fun goBack(view: View?) {
         back()
     }
@@ -210,14 +254,6 @@ open class MainActivity : AppCompatActivity() {
                 imageAdapter = ImageAdapter(this)
                 gridview?.adapter = imageAdapter
             }
-        }
-    }
-
-    private fun onRequestPermissionResult(savedInstanceState: Bundle?) {
-        if (areMediaPermissionsGranted(this.applicationContext)) {
-            initializeViews(savedInstanceState)
-        } else {
-            Toast.makeText(applicationContext, "Please accept media permissions to continue the app", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -491,7 +527,7 @@ open class MainActivity : AppCompatActivity() {
             }
             return gridViewNew
         }
-    }
+    }*/
 
     companion object {
         var dirList = ArrayList<String>()

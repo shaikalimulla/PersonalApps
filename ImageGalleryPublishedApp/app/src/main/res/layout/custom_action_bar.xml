@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/photo"
         android:id="@+id/clickBtn"
-        android:onClick="clickPic"
         android:layout_alignParentLeft="true"
         android:background="@drawable/photo"
         />

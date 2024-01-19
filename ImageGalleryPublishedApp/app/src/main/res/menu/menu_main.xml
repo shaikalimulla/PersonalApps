@@ -6,27 +6,17 @@
 
     <item android:id="@+id/action_speech"
         android:icon="@drawable/ic_perm_camera_mic"
-        android:showAsAction="always"
         android:title="Speech"
         android:layout_gravity="center"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_height="50dp"
-        />
+        compat:showAsAction="always" />
 
     <item android:id="@+id/action_info"
         android:icon="@drawable/ic_info"
-        appname:showAsAction="ifRoom"
+        appname:showAsAction="never"
         android:title="App Info"
-        android:layout_gravity="center"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_height="50dp"
-        />
-
-    <item android:id="@+id/action_home"
-        appname:showAsAction="ifRoom"
-        android:title="Home"
         android:layout_gravity="center"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
@@ -35,7 +25,7 @@
 
     <item android:id="@+id/action_policy"
         android:icon="@drawable/ic_info"
-        appname:showAsAction="ifRoom"
+        appname:showAsAction="never"
         android:title="Privacy Policy"
         android:layout_gravity="center"
         android:layout_alignParentTop="true"
