@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.BaseAdapter
 import android.widget.ImageView
+import com.example.alimu.imagegallery.common.ImageUtil
+import com.example.alimu.imagegallery.common.ImageUtil.getDecodedBitmap
 
 class ImagesGridAdapter(private val context: Context) : BaseAdapter() {
     private var selectedPosition = -1
@@ -57,12 +59,12 @@ class ImagesGridAdapter(private val context: Context) : BaseAdapter() {
         } else {
             imageView = convertView as ImageView
         }
-        val bmOptions = BitmapFactory.Options()
-        bmOptions.inJustDecodeBounds = false
-        bmOptions.inSampleSize = 4
-        bmOptions.inPurgeable = true
-        val bitmap = BitmapFactory.decodeFile(imageList[position], bmOptions)
-        imageView.setImageBitmap(bitmap)
+        val bitmap = if (position < imageList.size) {
+            getDecodedBitmap(imageList[position])
+        } else {
+            null
+        }
+        bitmap?.let { imageView.setImageBitmap(it) }
 
         /*Glide.with(imageView.context)
             .asBitmap()

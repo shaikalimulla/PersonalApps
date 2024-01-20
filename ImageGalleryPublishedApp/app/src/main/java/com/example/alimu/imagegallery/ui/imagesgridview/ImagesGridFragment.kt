@@ -164,15 +164,7 @@ class ImagesGridFragment: Fragment(), ImagesGridContract.View, ImagesGridListene
     override fun addSelectedImages(dirName: String, path: String, operation: String) {
         positionsList.sort()
         for (i in positionsList.size - 1 downTo 0) {
-            selectedItem = imageAdapter?.getItem(positionsList[i])
-            val firstPosition = gridview?.firstVisiblePosition ?: return
-            val lastPosition = gridview?.lastVisiblePosition ?: return
-            val position = positionsList[i]
-            if (position >= firstPosition && position <= lastPosition) {
-                val tv = gridview?.getChildAt(position - firstPosition) as View
-                tv.setBackgroundColor(Color.TRANSPARENT)
-                tv.invalidate()
-            }
+            invalidateItemView(i)
             // copy and cut has same logic so passing "copy" here
             presenter.findImage(path, dirName, OPERATION_COPY, selectedItem)
             val fileParent = File(selectedItem?: return).parent
@@ -187,15 +179,7 @@ class ImagesGridFragment: Fragment(), ImagesGridContract.View, ImagesGridListene
     override fun proceedDeletion() {
         positionsList.sort()
         for (i in positionsList.size - 1 downTo 0) {
-            selectedItem = imageAdapter?.getItem(positionsList[i])
-            val firstPosition = gridview?.firstVisiblePosition ?: return
-            val lastPosition = gridview?.lastVisiblePosition ?: return
-            val position = positionsList[i]
-            if (position >= firstPosition && position <= lastPosition) {
-                val tv = gridview?.getChildAt(position - firstPosition) as View
-                tv.setBackgroundColor(Color.TRANSPARENT)
-                tv.invalidate()
-            }
+            invalidateItemView(i)
             imageAdapter?.remove(selectedItem)
             presenter.removeImageFromPhone(selectedItem)
         }
@@ -285,17 +269,21 @@ class ImagesGridFragment: Fragment(), ImagesGridContract.View, ImagesGridListene
 
     override fun destroyView() {
         for (i in positionsList.size - 1 downTo 0) {
-            selectedItem = imageAdapter?.getItem(positionsList[i])
-            val firstPosition = gridview?.firstVisiblePosition ?: return
-            val lastPosition = gridview?.lastVisiblePosition ?: return
-            val position = positionsList[i]
-            if (position >= firstPosition && position <= lastPosition) {
-                val tv = gridview?.getChildAt(position - firstPosition) as View
-                tv.setBackgroundColor(Color.TRANSPARENT)
-                tv.invalidate()
-            }
+            invalidateItemView(i)
         }
         refreshViews(true)
+    }
+
+    private fun invalidateItemView(index: Int) {
+        selectedItem = imageAdapter?.getItem(positionsList[index])
+        val firstPosition = gridview?.firstVisiblePosition ?: return
+        val lastPosition = gridview?.lastVisiblePosition ?: return
+        val position = positionsList[index]
+        if (position >= firstPosition && position <= lastPosition) {
+            val tv = gridview?.getChildAt(position - firstPosition) as View
+            tv.setBackgroundColor(Color.TRANSPARENT)
+            tv.invalidate()
+        }
     }
 
     private fun refreshViews(clearPositionsList: Boolean) {
