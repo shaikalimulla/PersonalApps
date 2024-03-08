@@ -18,10 +18,22 @@ object PermissionUtil {
     }
     
     private fun getPermissionsList(): Array<String> {
-        return if (VERSION.SDK_INT <= VERSION_CODES.P) {
-            arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        } else {
-            arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
+        return when {
+            VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE -> {
+                arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VIDEO, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+            }
+            VERSION.SDK_INT >= VERSION_CODES.TIRAMISU -> {
+                arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VIDEO)
+            }
+            VERSION.SDK_INT > VERSION_CODES.P -> {
+                arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
+            else -> {
+                arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
         }
     }
     

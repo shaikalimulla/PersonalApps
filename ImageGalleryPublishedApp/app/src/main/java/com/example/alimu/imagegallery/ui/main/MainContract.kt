@@ -8,7 +8,11 @@ interface MainContract {
         fun areMediaPermissionsGranted(): Boolean
         fun showDirectoriesGridFragment()
         fun requestMediaPermissions()
+
+        fun showMessage(message: String)
     }
 
-    interface Presenter: BasePresenter {}
+    interface Presenter: BasePresenter {
+        fun onRequestPermissionResult()
+    }
 }

@@ -113,7 +113,6 @@ class DirectoriesGridPresenter(
                 numOfFiles++
             }
         }
-        //localDirSizeList.add(numOfFiles)
         var startIndex = 0
         if (numOfFiles > 0) {
             localDirSizeList.add(numOfFiles)

@@ -7,14 +7,17 @@
         android:required="true" />
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <!-- Required only if your app needs to access images or photos
-     that other apps created. -->
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
+    <!-- Devices running Android 12L (API level 32) or lower  -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
+
+    <!-- Devices running Android 13 (API level 33) or higher. Required only if your app needs
+        to access images or photos that other apps created. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />

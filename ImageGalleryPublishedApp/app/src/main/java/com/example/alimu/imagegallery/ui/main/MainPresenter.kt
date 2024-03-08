@@ -13,4 +13,12 @@ class MainPresenter (
             }
         }
     }
+
+    override fun onRequestPermissionResult() {
+        if (view.areMediaPermissionsGranted()) {
+            view.showDirectoriesGridFragment()
+        } else {
+            view.showMessage("Please accept media permissions to continue the app")
+        }
+    }
 }
